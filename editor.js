@@ -8,7 +8,7 @@ $(function () {
             Widget = ui.Widget,
             drawing = kendo.drawing,
             geometry = kendo.geometry;
-        ;
+
 
         var ImageEditor = Widget.extend({
             init: function (element, options) {
@@ -33,6 +33,7 @@ $(function () {
                 that.toolbar = (kendo.template(that._templates.toolbar))(that.id);
                 that.surfaceElement = $(that._templates.surface);
 
+
                 that.element.append(that.toolbar);
                 that.element.append(that.surfaceElement);
 
@@ -46,7 +47,7 @@ $(function () {
             ,
             _templates: {
                 toolbar: "<div id='Toolbar_#= id #' style='width: 500px;'></div>",
-                surface: "<div id='Surface' style='width: 500px; height: 500px;border: 1px solid black;cursor: crosshair;'></div>"
+                surface: "<div id='Surface' data-role='touch' style='width: 500px; height: 500px;border: 1px solid black;cursor: crosshair;'></div>"
             }
         });
 

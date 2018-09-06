@@ -5,7 +5,7 @@ function Rectangle(element) {
     var surface = draw.Surface.create(element);
 
     var startPoint = {x: 0, y: 0};
-    element.kendoTouch = null;
+
     element.kendoTouch({
         dragstart: function (e) {
             e.event.preventDefault();

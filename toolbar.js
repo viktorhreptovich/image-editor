@@ -9,6 +9,7 @@ function inittoobar(idToolbar, mainElement) {
                     {
                         icon: "checkbox", text: "Rectange", togglable: true, group: "shape", toggle: function () {
                             mainElement.currentTool = new Rectangle(mainElement.surfaceElement);
+
                         }
                     },
                     {

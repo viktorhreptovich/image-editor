@@ -25,9 +25,13 @@
     $(document).ready(function () {
         $('#ImageEditor').kendoImageEditor();
     });
-    $(document).ready(function () {
-        $('#ImageEditor2').kendoImageEditor();
+
+    var viewModel = kendo.observable({
+        listener: function(e) {
+            console.log("Event: " + e.type);
+        }
     });
+
 </script>
 </body>
 </html>

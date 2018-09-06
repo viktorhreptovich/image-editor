@@ -6,13 +6,9 @@ function Circle(element) {
 
     var startPoint = {x: 0, y: 0};
 
-    element.kendoTouch = null;
-    element.kendoTouch({
-        dragstart: function (e) {
-            e.event.preventDefault();
-            var point = surfacePoint(e);
-            startPoint = point;
-        },
+
+    var touch =element.kendoTouch({
+        dragstart: DragStarting,
         drag: function (e) {
             var point = surfacePoint(e);
             var endPoint = point;
@@ -48,6 +44,15 @@ function Circle(element) {
             });
         }
     });
+
+    function DragStarting(e) {
+
+            e.event.preventDefault();
+            var point = surfacePoint(e);
+            startPoint = point;
+            console.log("Event from kendo: " + e.event.type);
+
+    }
 
     function surfacePoint(e) {
         e.event.preventDefault();
