@@ -2,57 +2,52 @@ function Circle(element) {
     var draw = kendo.drawing;
     var geom = kendo.geometry;
     var Circle = draw.Circle;
-    var surface = draw.Surface.create(element);
+    var surface;
 
-    var startPoint = {x: 0, y: 0};
+    this.startPoint = {x: 0, y: 0};
 
+    this.dragstart = function (e) {
+        e.event.preventDefault();
+        var point = surfacePoint(e);
+        this.startPoint = point;
+    };
 
-    var touch =element.kendoTouch({
-        dragstart: DragStarting,
-        drag: function (e) {
-            var point = surfacePoint(e);
-            var endPoint = point;
-            var radius = getRadius(endPoint, startPoint);
-            var circtemp = new Circle(new geom.Circle([point.x, point.y], radius), {
-                stroke: {
-                    color: "#333",
-                    width: 1
-                }
-            });
-            surface = draw.Surface.create(element);
-            surface.draw(circtemp);
-            element.shapes.forEach(function (drawElement) {
-                surface.draw(drawElement);
-            });
-        },
-        dragend: function (e) {
-            var point = surfacePoint(e);
-            var endPoint = point;
-            var radius = getRadius(endPoint, startPoint);
-            var circtemp = new Circle(new geom.Circle([point.x, point.y], radius), {
-                stroke: {
-                    color: "#333",
-                    width: 1
-                }
-            });
-            surface = draw.Surface.create(element);
+    this.drag = function (e) {
+        var point = surfacePoint(e);
+        var endPoint = point;
+        var radius = getRadius(endPoint, this.startPoint);
+        var circtemp = new Circle(new geom.Circle([this.startPoint.x, this.startPoint.y], radius), {
+            stroke: {
+                color: this.color,
+                width: this.thickness
+            }
+        });
+        surface = draw.Surface.create(element);
+        surface.draw(circtemp);
+        element.shapes.forEach(function (drawElement) {
+            surface.draw(drawElement);
+        });
+    };
 
-            element.shapes.push(circtemp);
+    this.dragend = function (e) {
+        var point = surfacePoint(e);
+        var endPoint = point;
+        var radius = getRadius(endPoint, this.startPoint);
+        var circtemp = new Circle(new geom.Circle([this.startPoint.x, this.startPoint.y], radius), {
+            stroke: {
+                color: this.color,
+                width: this.thickness
+            }
+        });
+        surface = draw.Surface.create(element);
 
-            element.shapes.forEach(function (drawElement) {
-                surface.draw(drawElement);
-            });
-        }
-    });
+        element.shapes.push(circtemp);
 
-    function DragStarting(e) {
+        element.shapes.forEach(function (drawElement) {
+            surface.draw(drawElement);
+        });
+    };
 
-            e.event.preventDefault();
-            var point = surfacePoint(e);
-            startPoint = point;
-            console.log("Event from kendo: " + e.event.type);
-
-    }
 
     function surfacePoint(e) {
         e.event.preventDefault();

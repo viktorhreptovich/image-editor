@@ -13,8 +13,8 @@
     <script src="https://kendo.cdn.telerik.com/2018.2.620/js/kendo.all.min.js"></script>
     <script src="templateloader.js"></script>
     <script src="editor.js"></script>
-    <script src="tools/circle.js"></script>
-    <script src="tools/rectangle.js"></script>
+    <!--<script src="tools/circle.js"></script>-->
+    <!--<script src="tools/rectangle.js"></script>-->
 </head>
 <body>
 <div id="ImageEditor">
@@ -25,13 +25,6 @@
     $(document).ready(function () {
         $('#ImageEditor').kendoImageEditor();
     });
-
-    var viewModel = kendo.observable({
-        listener: function(e) {
-            console.log("Event: " + e.type);
-        }
-    });
-
 </script>
 </body>
 </html>
