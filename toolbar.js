@@ -5,19 +5,20 @@ function inittoobar(idToolbar, mainElement) {
     this.curColorCircle = 'black';
     this.curThicknessCicle = 1;
 
+    $("head").append("<link rel='stylesheet' type='text/css' href='icons/icons.css'>")
     $(idToolbar).kendoToolBar({
         items: [
             {
                 type: "buttonGroup",
                 buttons: [
                     {
-                        icon: "pan", togglable: true, group: "shape", selected: true,
+                        icon: "image-editor-pointer", togglable: true, group: "shape", selected: true,
                         toggle: function () {
                             mainElement.currentTool = new Pointer(mainElement.surfaceElement);
                         }
                     },
                     {
-                        icon: "pencil", togglable: true, group: "shape", toggle: function () {
+                        icon: "image-editor-pencil", togglable: true, group: "shape", toggle: function () {
                             mainElement.currentTool = new Pencil(mainElement.surfaceElement);
                             mainElement.currentTool.color = $("#dropdownColor").data("kendoColorPicker").value();
                             mainElement.currentTool.thickness = $("#dropdownThickness").data("kendoDropDownList").value();
@@ -31,14 +32,14 @@ function inittoobar(idToolbar, mainElement) {
                         }
                     },
                     {
-                        icon: "checkbox", togglable: true, group: "shape", toggle: function () {
+                        icon: "image-editor-rectangle", togglable: true, group: "shape", toggle: function () {
                             mainElement.currentTool = new Rectangle(mainElement);
                             mainElement.currentTool.color = $("#dropdownColor").data("kendoColorPicker").value();
                             mainElement.currentTool.thickness = $("#dropdownThickness").data("kendoDropDownList").value();
                         }
                     },
                     {
-                        icon: "radiobutton", togglable: true, group: "shape", toggle: function () {
+                        icon: "image-editor-circle", togglable: true, group: "shape", toggle: function () {
                             mainElement.currentTool = new Circle(mainElement.surfaceElement);
                             mainElement.currentTool.color = $("#dropdownColor").data("kendoColorPicker").value();
                             mainElement.currentTool.thickness = $("#dropdownThickness").data("kendoDropDownList").value();
