@@ -8,7 +8,7 @@ $(function () {
             Widget = ui.Widget,
             drawing = kendo.drawing,
             geometry = kendo.geometry;
-        ;
+
 
         var ImageEditor = Widget.extend({
             init: function (element, options) {
@@ -21,14 +21,22 @@ $(function () {
             },
             _create: function () {
                 var that = this;
+
                 //add js import
                 $("head").append("<script src='toolbar.js'></script>")
-                //   $("head").append("<script src='tools/circle.js'></script>")
-                //   $("head").append("<script src='tools/rectangle.js'></script>")
+                $("head").append("<script src='tools/circle.js'></script>")
+                $("head").append("<script src='tools/rectangle.js'></script>")
+                $("head").append("<script src='tools/line.js'></script>")
+                $("head").append("<script src='tools/pencil.js'></script>")
+                $("head").append("<script src='tools/pointer.js'></script>")
+
+
+
 
 
                 // create dropdowns from templates and append them to DOM
                 that.id = {id: that.element[0].id};
+
 
                 that.toolbar = (kendo.template(that._templates.toolbar))(that.id);
                 that.surfaceElement = $(that._templates.surface);
@@ -36,11 +44,32 @@ $(function () {
                 that.element.append(that.toolbar);
                 that.element.append(that.surfaceElement);
 
-                that.surfaceElement.shapes = [];
-
-                that.currentTool = new Circle(that.surfaceElement);
 
                 inittoobar("#Toolbar_" + that.element[0].id, that);
+
+                that.surfaceElement.shapes = [];
+                that.currentTool = new Pointer(that.surfaceElement);
+
+                that.surfaceElement.kendoTouch({
+                    dragstart: function (e) {
+                        that.currentTool.dragstart(e);
+                    },
+                    drag: function (e) {
+                        that.surface = drawing.Surface.create(that.surfaceElement);
+                        that.surfaceElement.shapes.forEach(function (drawElement) {
+                            that.surface.draw(drawElement);
+                        });
+                        that.currentTool.drag(e);
+                    },
+                    dragend: function (e) {
+                        that.surface = drawing.Surface.create(that.surfaceElement);
+                        that.currentTool.dragend(e);
+                        that.surfaceElement.shapes.forEach(function (drawElement) {
+                            that.surface.draw(drawElement);
+                        });
+                    }
+                });
+
                 kendo.bind(that.element, that.options);
             }
             ,
