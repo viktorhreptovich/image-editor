@@ -15,68 +15,57 @@ $(function () {
                 var that = this;
                 Widget.fn.init.call(that, element, options);
                 that._create();
+                that._init_events();
             },
             options: {
-                name: "ImageEditor"
+                id: "Undefined",
+                name: "ImageEditor",
+                width: 0,
+                height: 0,
+                imageurl: ""
             },
             _create: function () {
                 var that = this;
+                that.options.id = that.element.attr('id');
+                that.options.width += "px";
+                that.options.height += "px";
 
                 //add js import
                 $("head").append("<script src='toolbar.js'></script>")
-                $("head").append("<script src='tools/circle.js'></script>")
-                $("head").append("<script src='tools/rectangle.js'></script>")
-                $("head").append("<script src='tools/line.js'></script>")
-                $("head").append("<script src='tools/pencil.js'></script>")
-                $("head").append("<script src='tools/pointer.js'></script>")
 
-
-
-
-
-                // create dropdowns from templates and append them to DOM
-                that.id = {id: that.element[0].id};
-
-
-                that.toolbar = (kendo.template(that._templates.toolbar))(that.id);
-                that.surfaceElement = $(that._templates.surface);
-
-
+                that.toolbar = $((kendo.template(that._templates.toolbar))(that.options));
+                that.surfaceElement = $((kendo.template(that._templates.surface))(that.options));
+                //
+                //
                 that.element.append(that.toolbar);
+                new Toolbar(that);
                 that.element.append(that.surfaceElement);
 
 
-                inittoobar("#Toolbar_" + that.element[0].id, that);
-
-                that.surfaceElement.shapes = [];
-                that.currentTool = new Pointer(that.surfaceElement);
-
+                that.drawing_data = [];
+                that.currentTool = new Pointer(that);
+                //
+                //
+                kendo.bind(that.element, that.options);
+            },
+            _init_events: function () {
+                var that = this;
                 that.surfaceElement.kendoTouch({
                     dragstart: function (e) {
                         that.currentTool.dragstart(e);
                     },
                     drag: function (e) {
-                        that.surface = drawing.Surface.create(that.surfaceElement);
-                        that.surfaceElement.shapes.forEach(function (drawElement) {
-                            that.surface.draw(drawElement);
-                        });
                         that.currentTool.drag(e);
                     },
                     dragend: function (e) {
-                        that.surface = drawing.Surface.create(that.surfaceElement);
                         that.currentTool.dragend(e);
-                        that.surfaceElement.shapes.forEach(function (drawElement) {
-                            that.surface.draw(drawElement);
-                        });
                     }
                 });
-
-                kendo.bind(that.element, that.options);
             }
             ,
             _templates: {
-                toolbar: "<div id='Toolbar_#= id #' style='width: 500px;'></div>",
-                surface: "<div id='Surface' data-role='touch' style='width: 500px; height: 500px;border: 1px solid black;cursor: crosshair;'></div>"
+                toolbar: "<div id='Toolbar_#= id #' style='width: #= width #;'></div>",
+                surface: "<div id='Surface_#= id #' style='width: #= width #; height: #= height #;border: 1px solid black;cursor: crosshair;'></div>"
             }
         });
 

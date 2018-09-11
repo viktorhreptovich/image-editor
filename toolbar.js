@@ -1,12 +1,8 @@
-function inittoobar(idToolbar, mainElement) {
-    this.curColorRectangle = 'black';
-    this.curThicknessRectangle = 1;
-
-    this.curColorCircle = 'black';
-    this.curThicknessCicle = 1;
-
+function Toolbar(mainElement) {
+    console.log("Init toolbar " + mainElement.id);
     $("head").append("<link rel='stylesheet' type='text/css' href='icons/icons.css'>")
-    $(idToolbar).kendoToolBar({
+    console.log(mainElement.toolbar);
+    $(mainElement.toolbar).kendoToolBar({
         items: [
             {
                 type: "buttonGroup",
@@ -14,35 +10,31 @@ function inittoobar(idToolbar, mainElement) {
                     {
                         icon: "image-editor-pointer", togglable: true, group: "shape", selected: true,
                         toggle: function () {
-                            mainElement.currentTool = new Pointer(mainElement.surfaceElement);
+                            selectTool(Pointer)
                         }
                     },
                     {
-                        icon: "image-editor-pencil", togglable: true, group: "shape", toggle: function () {
-                            mainElement.currentTool = new Pencil(mainElement.surfaceElement);
-                            mainElement.currentTool.color = $("#dropdownColor").data("kendoColorPicker").value();
-                            mainElement.currentTool.thickness = $("#dropdownThickness").data("kendoDropDownList").value();
+                        icon: "image-editor-pencil", togglable: true, group: "shape",
+                        toggle: function () {
+                            selectTool(Pencil)
                         }
                     },
                     {
-                        icon: "line", togglable: true, group: "shape", toggle: function () {
-                            mainElement.currentTool = new Line(mainElement.surfaceElement);
-                            mainElement.currentTool.color = $("#dropdownColor").data("kendoColorPicker").value();
-                            mainElement.currentTool.thickness = $("#dropdownThickness").data("kendoDropDownList").value();
+                        icon: "line", togglable: true, group: "shape",
+                        toggle: function () {
+                            selectTool(Line)
                         }
                     },
                     {
-                        icon: "image-editor-rectangle", togglable: true, group: "shape", toggle: function () {
-                            mainElement.currentTool = new Rectangle(mainElement);
-                            mainElement.currentTool.color = $("#dropdownColor").data("kendoColorPicker").value();
-                            mainElement.currentTool.thickness = $("#dropdownThickness").data("kendoDropDownList").value();
+                        icon: "image-editor-rectangle", togglable: true, group: "shape",
+                        toggle: function () {
+                            selectTool(Rectangle)
                         }
                     },
                     {
-                        icon: "image-editor-circle", togglable: true, group: "shape", toggle: function () {
-                            mainElement.currentTool = new Circle(mainElement.surfaceElement);
-                            mainElement.currentTool.color = $("#dropdownColor").data("kendoColorPicker").value();
-                            mainElement.currentTool.thickness = $("#dropdownThickness").data("kendoDropDownList").value();
+                        icon: "image-editor-circle", togglable: true, group: "shape",
+                        toggle: function () {
+                            selectTool(Circle)
                         }
                     }
                 ]
@@ -57,8 +49,16 @@ function inittoobar(idToolbar, mainElement) {
                 overflow: "never"
             },
 
-        ]
+        ],
+
+
     });
+
+    function selectTool(TypeTool) {
+        mainElement.currentTool = new TypeTool(mainElement);
+        mainElement.currentTool.color = $("#dropdownColor").data("kendoColorPicker").value();
+        mainElement.currentTool.thickness = $("#dropdownThickness").data("kendoDropDownList").value();
+    };
 
     $("#dropdownColor").kendoColorPicker({
         palette: "basic",
@@ -83,5 +83,6 @@ function inittoobar(idToolbar, mainElement) {
             }
         }
     );
+
 }
 

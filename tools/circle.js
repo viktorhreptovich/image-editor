@@ -24,7 +24,7 @@ function Circle(element) {
         });
         surface = draw.Surface.create(element);
         surface.draw(circtemp);
-        element.shapes.forEach(function (drawElement) {
+        element.drawing_data.forEach(function (drawElement) {
             surface.draw(drawElement);
         });
     };
@@ -41,9 +41,9 @@ function Circle(element) {
         });
         surface = draw.Surface.create(element);
 
-        element.shapes.push(circtemp);
+        element.drawing_data.push(circtemp);
 
-        element.shapes.forEach(function (drawElement) {
+        element.drawing_data.forEach(function (drawElement) {
             surface.draw(drawElement);
         });
     };
