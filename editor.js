@@ -50,22 +50,34 @@ $(function () {
             },
             _init_events: function () {
                 var that = this;
-                that.surfaceElement.kendoTouch({
-                    dragstart: function (e) {
-                        that.currentTool.dragstart(e);
-                    },
-                    drag: function (e) {
-                        that.currentTool.drag(e);
-                    },
-                    dragend: function (e) {
-                        that.currentTool.dragend(e);
-                    }
+                // that.surfaceElement.kendoTouch({
+                //     dragstart: function (e) {
+                //         that.currentTool.dragstart(e);
+                //     },
+                //     drag: function (e) {
+                //         that.currentTool.drag(e);
+                //     },
+                //     dragend: function (e) {
+                //         that.currentTool.dragend(e);
+                //     }
+                // });
+                $(that.surfaceElement).on("mousemove", function (e) {
+
+                    that.currentTool.mousemove(e);
+                });
+                $(that.surfaceElement).on("mousedown", function (e) {
+                    console.log("Mouse down");
+                    that.currentTool.mousedown(e);
+                });
+                $(that.surfaceElement).on("mouseup", function (e) {
+                    that.currentTool.mouseup(e);
+                    console.log("Mouse up");
                 });
             }
             ,
             _templates: {
                 toolbar: "<div id='Toolbar_#= id #' style='width: #= width #;'></div>",
-                surface: "<div id='Surface_#= id #' style='width: #= width #; height: #= height #;border: 1px solid black;cursor: crosshair;'></div>"
+                surface: "<div id='Surface_#= id #' style='width: #= width #; height: #= height #;border: 1px solid black;'></div>"
             }
         });
 
