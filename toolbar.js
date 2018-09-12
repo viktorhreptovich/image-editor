@@ -36,10 +36,18 @@ function Toolbar(mainElement) {
                         toggle: function () {
                             selectTool(Circle)
                         }
+                    },
+                    {
+                        icon: "image-editor-text", togglable: true, group: "shape",
+                        toggle: function () {
+                            selectTool(Circle)
+                        }
                     }
+
                 ]
             },
-            {type: "separator"},
+            {type: "separator", icon: "image-editor-clear"},
+            {type:"button"},
             {
                 template: "<input type='color' id='dropdownColor' />",
                 overflow: "never"

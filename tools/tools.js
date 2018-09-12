@@ -33,8 +33,10 @@ var Tool = function (element) {
             element.surface.draw(this.shape());
         } else {
             var point = this.currentPoint;
-            element.drawing_data.forEach(function (drawElement) {
-                element.currentTool.containsPoint(drawElement, point);
+            $.each(element.drawing_data,function (index,value) {
+                if (element.currentTool.containsPoint(value, point)) {
+                    return false;
+                }
             });
         }
     }
@@ -63,8 +65,17 @@ var Tool = function (element) {
     this.containsPoint = function (drawElement, point) {
 
 
-        function inLine(x1, y1, x2, y2, x3, y3) {
-            return (x1 - x2) * (y3 - y2) == (x3 - x2) * (y1 - y2);
+        function inLine(x, y, x1, y1, x2, y2) {
+
+            var xin1 = ((x1-1))<x && (x <(x2+1));
+            var xin2 = ((x2-1))<x && (x <(x1+1));
+            var yin1 = ((y1-1))<y && (y <(y2+1));
+            var yin2 = ((y2-1))<y && (y <(y1+1));
+            return (xin1||xin2)&&(yin1||yin2)&&Math.abs(dz(x, y, x1, y1, x2, y2))<1000;
+        }
+
+        function dz(x, y, x1, y1, x2, y2) {
+            return ((x - x1) * (y2 - y1) - (y - y1) * (x2 - x1));
         }
 
         if (inLine(
@@ -73,22 +84,24 @@ var Tool = function (element) {
             drawElement.segments[0]._anchor.getX(),
             drawElement.segments[0]._anchor.getY(),
             drawElement.segments[1]._anchor.getX(),
-            drawElement.segments[1]._anchor.getY(),
+            drawElement.segments[1]._anchor.getY()
         )) {
+
             element.surfaceElement.css('cursor', 'move');
+
+            return true;
         } else {
             element.surfaceElement.css('cursor', 'default');
+            return false;
         }
-
-
-    }
+   }
 
 };
 
 
 //********************* Pointer **************************************************
 function Pointer() {
-    this.name = "Pointer"
+    this.name = "Pointer";
     Tool.apply(this, arguments);
 
     this.mousedown = function () {
@@ -99,7 +112,7 @@ function Pointer() {
 
 //********************* Pencil *************************************************
 function Pencil(element) {
-    this.name = "Pencil"
+    this.name = "Pencil";
     Tool.apply(this, arguments);
     console.log("Init 'Pencil'");
     this.multipath = [];
@@ -136,14 +149,14 @@ function Pencil(element) {
         var y = e.pageY - Math.round(offset.top);
         this.currentPoint = new kendo.geometry.Point(x, y);
 
-        // if (this.startdraw) {
-        //     element.surface = kendo.drawing.Surface.create(element.surfaceElement);
-        //     this.multipath.push(this.currentPoint);
-        //     element.drawing_data.forEach(function (drawElement) {
-        //         element.surface.draw(drawElement);
-        //     });
-        //     element.surface.draw(this.shape());
-        // }
+        if (this.startdraw) {
+            element.surface = kendo.drawing.Surface.create(element.surfaceElement);
+            this.multipath.push(this.currentPoint);
+            element.drawing_data.forEach(function (drawElement) {
+                element.surface.draw(drawElement);
+            });
+            element.surface.draw(this.shape());
+        }
         this.startPoint = this.currentPoint;
     }
 
@@ -151,7 +164,7 @@ function Pencil(element) {
 
 //********************* Line *************************************************
 function Line(element) {
-    this.name = "Line"
+    this.name = "Line";
     Tool.apply(this, arguments);
     console.log("Init 'Line'");
 
@@ -161,20 +174,17 @@ function Line(element) {
             stroke: {
                 color: this.color,
                 width: this.thickness
-            },
-            tooltip: {
-                showOn: function (e) {
-                    alert("select");
-                }
             }
+
         }).moveTo(this.startPoint).lineTo(this.currentPoint).close();
     }
+
 }
 
 
 //********************* Rectangle *************************************************
 function Rectangle(element) {
-    this.name = "Rectangle"
+    this.name = "Rectangle";
     Tool.apply(this, arguments);
     console.log("Init 'Rectagle': ");
     console.log(this);
@@ -194,7 +204,7 @@ function Rectangle(element) {
 
 //********************* Circle *************************************************
 function Circle(element) {
-    this.name = "Circle"
+    this.name = "Circle";
     Tool.apply(this, arguments);
     console.log("Circle created");
     this.shape = function () {
