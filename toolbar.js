@@ -20,7 +20,7 @@ function Toolbar(mainElement) {
                         }
                     },
                     {
-                        icon: "line", togglable: true, group: "shape",
+                        icon: "image-editor-line", togglable: true, group: "shape",
                         toggle: function () {
                             selectTool(Line)
                         }
@@ -38,16 +38,15 @@ function Toolbar(mainElement) {
                         }
                     },
                     {
-                        icon: "image-editor-text", togglable: true, group: "shape",
+                        icon: "image-editor-text", togglable: false, group: "shape", enabled: false,
                         toggle: function () {
-                            selectTool(Circle)
                         }
                     }
 
                 ]
             },
-            {type: "separator", icon: "image-editor-clear"},
-            {type:"button"},
+            {type: "button", icon: "image-editor-clear", enable: false},
+            {type: "separator"},
             {
                 template: "<input type='color' id='dropdownColor' />",
                 overflow: "never"
