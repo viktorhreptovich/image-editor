@@ -1,7 +1,6 @@
 function Toolbar(mainElement) {
     console.log("Init toolbar " + mainElement.id);
     $("head").append("<link rel='stylesheet' type='text/css' href='icons/icons.css'>")
-    console.log(mainElement.toolbar);
     $(mainElement.toolbar).kendoToolBar({
         items: [
             {
@@ -10,49 +9,55 @@ function Toolbar(mainElement) {
                     {
                         icon: "image-editor-pointer", togglable: true, group: "shape", selected: true,
                         toggle: function () {
-                            selectTool(Pointer)
-                        }
+                            selectTool(PointerTool)
+                        },
+                        overflow: "never"
                     },
                     {
                         icon: "image-editor-pencil", togglable: true, group: "shape",
                         toggle: function () {
-                            selectTool(Pencil)
-                        }
+                            selectTool(PencilTool)
+                        },
+                        overflow: "never"
                     },
                     {
                         icon: "image-editor-line", togglable: true, group: "shape",
                         toggle: function () {
-                            selectTool(Line)
-                        }
+                            selectTool(LineTool)
+                        },
+                        overflow: "never"
                     },
                     {
-                        icon: "image-editor-rectangle", togglable: true, group: "shape",
+                        icon: "image-editor-rectangle", togglable: false, group: "shape", enable: false,
                         toggle: function () {
-                            selectTool(Rectangle)
-                        }
+
+                        },
+                        overflow: "never"
                     },
                     {
-                        icon: "image-editor-circle", togglable: true, group: "shape",
+                        icon: "image-editor-circle", togglable: false, group: "shape", enable: false,
                         toggle: function () {
-                            selectTool(Circle)
-                        }
+
+                        },
+                        overflow: "never"
                     },
                     {
-                        icon: "image-editor-text", togglable: false, group: "shape", enabled: false,
+                        icon: "image-editor-text", togglable: false, group: "shape", enable: false,
                         toggle: function () {
-                        }
+                        },
+                        overflow: "never"
                     }
 
                 ]
             },
-            {type: "button", icon: "image-editor-clear", enable: false},
+            {type: "button", icon: "image-editor-clear", enable: false, overflow: "never"},
             {type: "separator"},
             {
                 template: "<input type='color' id='dropdownColor' />",
                 overflow: "never"
             },
             {
-                template: "<input id='dropdownThickness' style='width:100px'>",
+                template: "<input id='dropdownThickness' style='width:70px'>",
                 overflow: "never"
             },
 

@@ -32,6 +32,9 @@ $(function () {
 
                 //add js import
                 $("head").append("<script src='toolbar.js'></script>")
+                $("head").append("<script src='tools/tools2.js'></script>")
+                $("head").append("<script src='tools/shapes.js'></script>")
+
 
                 that.toolbar = $((kendo.template(that._templates.toolbar))(that.options));
                 that.surfaceElement = $((kendo.template(that._templates.surface))(that.options));
@@ -41,33 +44,23 @@ $(function () {
                 new Toolbar(that);
                 that.element.append(that.surfaceElement);
 
-
                 that.drawing_data = [];
-                that.currentTool = new Pointer(that);
-                //
-                //
+                that.currentTool = new PointerTool(that);
+
+
                 kendo.bind(that.element, that.options);
             },
             _init_events: function () {
                 var that = this;
-                // that.surfaceElement.kendoTouch({
-                //     dragstart: function (e) {
-                //         that.currentTool.dragstart(e);
-                //     },
-                //     drag: function (e) {
-                //         that.currentTool.drag(e);
-                //     },
-                //     dragend: function (e) {
-                //         that.currentTool.dragend(e);
-                //     }
-                // });
+                $(that.surfaceElement).on("click", function (e) {
+                    that.currentTool.click(e);
+                });
                 $(that.surfaceElement).on("mousemove", function (e) {
-
                     that.currentTool.mousemove(e);
                 });
                 $(that.surfaceElement).on("mousedown", function (e) {
-                    console.log("Mouse down");
                     that.currentTool.mousedown(e);
+                    console.log("Mouse down");
                 });
                 $(that.surfaceElement).on("mouseup", function (e) {
                     that.currentTool.mouseup(e);
