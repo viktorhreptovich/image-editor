@@ -1,5 +1,15 @@
+(function($) {
+    $.uuid = function() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+            return v.toString(16);
+        });
+    };
+})(jQuery);
+
 //********************* Pencil *************************************************
 function Pencil(element) {
+    this.id = $.uuid();
     this.color = element.currentTool.color;
     this.thickness = element.currentTool.thickness;
     this.multipath = [];
@@ -27,6 +37,7 @@ function Pencil(element) {
 
 //********************* Line *************************************************
 function Line(element) {
+    this.id = $.uuid();
     this.startPoint = element.currentTool.startPoint;
     this.endPoint = element.currentTool.currentPoint;
     this.color = element.currentTool.color;
@@ -77,7 +88,7 @@ function Line(element) {
     }
 
     this.selectShape = function () {
-        var sideSelect = this.thickness + 2;
+        var sideSelect = Number(this.thickness) + 5;
         var dzSideSelect = sideSelect / 2;
         var startPointSelect1 = new kendo.geometry.Point(this.startPoint.x - dzSideSelect, this.startPoint.y - dzSideSelect);
         var rec1 = new kendo.drawing.Rect(new kendo.geometry.Rect(startPointSelect1, [sideSelect, sideSelect]), {

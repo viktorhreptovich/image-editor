@@ -50,7 +50,8 @@ function Toolbar(mainElement) {
 
                 ]
             },
-            {type: "button", icon: "image-editor-clear", enable: false, overflow: "never"},
+            {type: "button", id: "clear",name:"clear", icon: "image-editor-clear", overflow: "never",enable:false,
+            click:clickClear},
             {type: "separator"},
             {
                 template: "<input type='color' id='dropdownColor' />",
@@ -96,5 +97,20 @@ function Toolbar(mainElement) {
         }
     );
 
+    this.clickSurface = function (e) {
+            $(mainElement.toolbar).data("kendoToolBar").enable("#clear",mainElement.shapeSelected);
+            console.log("Enable: " + mainElement.shapeSelected);
+    }
+
+    function clickClear(){
+        console.log("Start clear")
+        mainElement.drawing_data = mainElement.drawing_data.filter(function (value) {
+            console.log(value.id + "!=" + mainElement.shapeSelect.id);
+            return value.id != mainElement.shapeSelect.id;
+        });
+        console.log("Finish clear")
+        console.log(mainElement.drawing_data);
+        mainElement.currentTool.redrow();
+    }
 }
 

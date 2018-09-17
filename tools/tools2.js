@@ -57,6 +57,14 @@ var Tool = function (element) {
         return Math.sqrt(Math.pow((point2.x - point1.x), 2) + Math.pow((point2.y - point1.y), 2));
     }
 
+    this.redrow = function () {
+
+        element.surface = kendo.drawing.Surface.create(element.surfaceElement);
+        element.drawing_data.forEach(function (drawElement) {
+            element.surface.draw(drawElement.shape());
+        });
+
+    }
 
 };
 
@@ -83,10 +91,11 @@ function PointerTool(element) {
     }
 
     this.click = function (e) {
-        console.log("CCCCCCCCCCCCCCCCCCCCCCCC!!!!!!!!!!!!!!!!!!!!");
         console.log(element.findedShape);
         if (element.findedShape != undefined) {
             element.findedShape.selectShape();
+            element.shapeSelect = element.findedShape;
+            element.shapeSelected = true;
         }
     }
 

@@ -41,19 +41,24 @@ $(function () {
                 //
                 //
                 that.element.append(that.toolbar);
-                new Toolbar(that);
+                that.toolbarElement = new Toolbar(that);
                 that.element.append(that.surfaceElement);
 
                 that.drawing_data = [];
                 that.currentTool = new PointerTool(that);
+                that.shapeSelected = false;
 
 
                 kendo.bind(that.element, that.options);
             },
             _init_events: function () {
                 var that = this;
-                $(that.surfaceElement).on("click", function (e) {
+                $(that.surfaceElement).bind("click", function (e) {
                     that.currentTool.click(e);
+                });
+                $(that.surfaceElement).bind("click", function (e) {
+
+                    that.toolbarElement.clickSurface(e);
                 });
                 $(that.surfaceElement).on("mousemove", function (e) {
                     that.currentTool.mousemove(e);
