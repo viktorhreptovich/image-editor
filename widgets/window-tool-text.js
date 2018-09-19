@@ -25,15 +25,19 @@
 
 
             this.editor = $((kendo.template(this._templates.editor))(this.options));
+            this.textarea = $((kendo.template(this._templates.textarea))(this.options));
             this.element.append(this.editor);
+            this.element.append(this.textarea);
 
-            this.toolbarElement = WindowToolTextToolbar(this);
+            var that = this;
+            this.toolbarElement = WindowToolTextToolbar(that);
 
 
             kendo.bind(this.element, this.options);
         },
         _templates: {
-            editor: '<textarea id="Editor_#= id #" rows="3"style="width: 99%;height: 200px"></textarea>',
+            editor: '<div id="Toolbar_#: id #" style="width: 99%;"></div>',
+            textarea: '<textarea id="Editor_#: id #" class="k-textbox" style="width: 99%;height: 99%"></textarea>'
         }
     });
 
@@ -41,64 +45,31 @@
     ui.plugin(WindowToolText);
 })(jQuery);
 
-function WindowToolTextToolbar(element) {
 
-    console.log(kendo.ui.Editor.prototype.options);
-    $(element.editor).kendoEditor({
-        tools: [
+function WindowToolTextToolbar(element) {
+    element.editor.kendoToolBar({
+        items: [
             {
-                name: "fontName",
-                items: [
-                    kendo.ui.Editor.prototype.options.fontName
-                ]
-            },
-            {
-                name: "fontSize",
-                items: [].concat(
-                    kendo.ui.Editor.prototype.options.fontSize[0],
-                    [{text: "16px", value: "16px"}]
-                )
-            },
-            {
-                name: "formatting",
-                items: [].concat(
-                    kendo.ui.editor.FormattingTool.prototype.options.items[0],
-                    [{text: "Fieldset", value: "fieldset"}]
-                )
-            },
-            {
-                name: "customTemplate",
-                template: $("#backgroundColor-template").html()
-            },
-            {
-                name: "custom",
-                tooltip: "Insert a horizontal rule",
-                exec: function (e) {
-                    var editor = $(this).data("kendoEditor");
-                    editor.exec("inserthtml", {value: "<hr />"});
-                }
+                template: '<input id="dropdownFonts_' + element.id+'"/>',
+                overflow: "never"
             }
         ]
     });
-    $("#dropdownFont").kendoDropDownList({
+
+    $("#dropdownFonts_" + element.id).kendoDropDownList({
             dataTextField: "text",
             dataValueField: "value",
             dataSource: [
-                {text: "Arial", value: "Arial"},
-                {text: "Arial Black", value: "Arial Black"},
-                {text: "Bookman", value: "Bookman"},
-                {text: "Comic Sans MS", value: "Comic Sans MS"},
-                {text: "Courier", value: "Courier"},
-                {text: "Courier New", value: "Courier New"},
-                {text: "Garamond", value: "Garamond"},
-                {text: "Georgia", value: "Georgia"},
-                {text: "Helvetica", value: "Helvetica"},
-                {text: "Impact", value: "Impact"},
-                {text: "Palatino", value: "Palatino"},
-                {text: "Times", value: "Times"},
-                {text: "Times New Roman", value: "Times New Roman"},
-                {text: "Trebuchet MS", value: "Trebuchet MS"},
-                {text: "Verdana", value: "Verdana"}
+                {text: "Arial", value: "Arial, Helvetica, sans-serif"},
+                {text: "Arial Black", value: "'Arial Black', Gadget, sans-serif"},
+                {text: "Comic Sans MS", value: "'Comic Sans MS', cursive, sans-serif"},
+                {text: "Courier New", value: "'Courier New', Courier, monospace"},
+                {text: "Impact", value: "Impact, Charcoal, sans-serif"},
+                {text: "Lucida Console", value: "'Lucida Console',Monaco,monospace"},
+                {text: "Tahoma", value: "Tahoma,Geneva,sans-serif"},
+                {text: "Times New Roman", value: "'Times New Roman',Times,serif"},
+                {text: "Trebuchet MS", value: "'Trebuchet MS',Helvetica,sans-serif"},
+                {text: "Verdana", value: "Verdana,Geneva,sans-serif"}
             ],
         }
     );

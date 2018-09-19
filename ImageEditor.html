@@ -7,8 +7,6 @@
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2018.2.620/styles/kendo.common.min.css"/>
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2018.2.620/styles/kendo.rtl.min.css"/>
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2018.2.620/styles/kendo.silver.min.css"/>
-    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2018.2.620/styles/kendo.common.min.css"/>
-    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2018.2.620/styles/kendo.mobile.all.min.css"/>
 
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="https://kendo.cdn.telerik.com/2018.2.620/js/kendo.all.min.js"></script>
@@ -20,15 +18,16 @@
 <div id="ImageEditor">
     <div id="WindowToolText"></div>
 </div>
-
 <script>
     $(document).ready(function () {
+
+
         $('#ImageEditor').kendoImageEditor({
             width: 600,
             height: 600
         });
         $('#WindowToolText').kendoWindowToolText({
-            width: 700
+            width: 600
         });
     });
 </script>
