@@ -1,6 +1,6 @@
 function Toolbar(mainElement) {
     console.log("Init toolbar " + mainElement.id);
-    $("head").append("<link rel='stylesheet' type='text/css' href='icons/icons.css?1.0'>")
+    $("head").append("<link rel='stylesheet' type='text/css' href='icons/icons.css?1.0'>");
     $(mainElement.toolbar).kendoToolBar({
         items: [
             {
@@ -71,10 +71,7 @@ function Toolbar(mainElement) {
                 overflow: "never"
             },
 
-        ],
-        toggle: function (e) {
-            (e.id == 'Text') ? $(mainElement.texttoolbar).show() : $(mainElement.texttoolbar).hide();
-        }
+        ]
     });
 
     function selectTool(TypeTool) {
@@ -115,67 +112,13 @@ function Toolbar(mainElement) {
     }
 
     function clickClear() {
-        console.log("Start clear")
         mainElement.drawing_data = mainElement.drawing_data.filter(function (value) {
             console.log(value.id + "!=" + mainElement.shapeSelect.id);
             return value.id != mainElement.shapeSelect.id;
         });
-        console.log("Finish clear")
         console.log(mainElement.drawing_data);
         mainElement.currentTool.redrow();
     }
-
-
-    $(mainElement.texttoolbar).kendoToolBar({
-        items: [
-            {
-                template: "<input id='dropdownFont' />",
-                overflow: "never"
-            },
-            {type: "separator"},
-            {
-                type: "button",
-                id: "font",
-                name: "font",
-                icon: "image-editor16-clear",
-                overflow: "never",
-                enable: false,
-                click: clickClear
-            },
-            {
-                type: "button",
-                id: "size",
-                name: "size",
-                icon: "image-editor16-clear",
-                overflow: "never",
-                enable: false,
-            }
-        ],
-    });
-    $("#dropdownFont").kendoDropDownList({
-            dataTextField: "text",
-            dataValueField: "value",
-            dataSource: [
-                {text: "Arial", value: "Arial"},
-                {text: "Arial Black", value: "Arial Black"},
-                {text: "Bookman", value: "Bookman"},
-                {text: "Comic Sans MS", value: "Comic Sans MS"},
-                {text: "Courier", value: "Courier"},
-                {text: "Courier New", value: "Courier New"},
-                {text: "Garamond", value: "Garamond"},
-                {text: "Georgia", value: "Georgia"},
-                {text: "Helvetica", value: "Helvetica"},
-                {text: "Impact", value: "Impact"},
-                {text: "Palatino", value: "Palatino"},
-                {text: "Times", value: "Times"},
-                {text: "Times New Roman", value: "Times New Roman"},
-                {text: "Trebuchet MS", value: "Trebuchet MS"},
-                {text: "Verdana", value: "Verdana"}
-            ],
-        }
-    );
-
-    $(mainElement.texttoolbar).hide();
 
 
 }

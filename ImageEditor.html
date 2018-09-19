@@ -13,11 +13,12 @@
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="https://kendo.cdn.telerik.com/2018.2.620/js/kendo.all.min.js"></script>
     <script src="editor.js"></script>
+    <script src="widgets/window-tool-text.js"></script>
 
 </head>
 <body>
 <div id="ImageEditor">
-
+    <div id="WindowToolText"></div>
 </div>
 
 <script>
@@ -25,6 +26,9 @@
         $('#ImageEditor').kendoImageEditor({
             width: 600,
             height: 600
+        });
+        $('#WindowToolText').kendoWindowToolText({
+            width: 700
         });
     });
 </script>
