@@ -47,12 +47,17 @@
 
 
 function WindowToolTextToolbar(element) {
+
     element.editor.kendoToolBar({
         items: [
             {
-                template: '<input id="dropdownFonts_' + element.id+'"/>',
+                template: '<input id="dropdownFonts_' + element.id + '"/>',
                 overflow: "never"
-            }
+            },
+            {
+                template: '<input id="comboboxFontSize_' + element.id + '"/>',
+                overflow: "never"
+            },
         ]
     });
 
@@ -73,4 +78,45 @@ function WindowToolTextToolbar(element) {
             ],
         }
     );
+
+    var $comboboxFontSize = $("#comboboxFontSize_" + element.id)
+
+    $comboboxFontSize.kendoMaskedTextBox({
+        mask: "00",
+        promptChar: "__" //specify prompt char as empty char
+    });
+
+    $comboboxFontSize.kendoComboBox({
+            dataTextField: "value",
+            dataValueField: "value",
+            value: 12,
+            dataSource: [
+                {value: "8"},
+                {value: "9"},
+                {value: "10"},
+                {value: "11"},
+                {value: "12"},
+                {value: "14"},
+                {value: "16"},
+                {value: "18"},
+                {value: "20"},
+                {value: "22"},
+                {value: "24"},
+                {value: "26"},
+                {value: "28"},
+                {value: "36"},
+                {value: "48"},
+                {value: "72"}
+            ]
+        }
+    );
+    // $comboboxFontSize.on('click',function (e) {
+    //     alert('asdfasd');
+    //     console.log(e);
+    // })
+    //
+    // $comboboxFontSize.on('keydown',function (e) {
+    //     alert('asdfasd');
+    //     console.log(e);
+    // })
 }
