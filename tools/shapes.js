@@ -107,4 +107,23 @@ function Line(element) {
         element.surface.draw(rec1);
         element.surface.draw(rec2);
     }
+
+
+    //********************* Text *************************************************
+    function Text1(element) {
+        this.id = $.uuid();
+        this.startPoint = element.currentTool.startPoint;
+        this.endPoint = element.currentTool.currentPoint;
+        this.color = element.currentTool.color;
+        this.thickness = element.currentTool.thickness;
+
+        this.shape = function () {
+            return new kendo.drawing.Text("Test text", this.currentPoint, {
+                stroke: {
+                    color: this.color
+                }
+
+            });
+        }
+    }
 }

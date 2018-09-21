@@ -142,3 +142,24 @@ function LineTool(element) {
 
 }
 
+//********************* Text Tool **************************************************
+function TextTool(element) {
+    this.name = "Text";
+    this.typeShape = Text1;
+    Tool.apply(this, arguments);
+
+    this.click = function (e) {
+        // console.log("Open window tool text");
+        // element.windowToolText.open();
+        // element.windowToolText.Tool = this;
+    }
+
+    // this.mousedown = function (e) {
+    //     this.startPoint = this.currentPoint;
+    // }
+
+    // this.mouseup = function (e) {
+    // }
+
+}
+

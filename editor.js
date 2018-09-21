@@ -25,6 +25,7 @@ $(function () {
                 imageurl: ""
             },
             _create: function () {
+
                 var that = this;
                 that.id = that.element.attr('id');
                 that.options.id = that.element.attr('id');
@@ -33,21 +34,19 @@ $(function () {
 
                 //add js import
                 $("head").append("<script src='toolbar.js'></script>")
-                $("head").append("<script src='tools/windowtootext.js'></script>");
-                $("head").append("<script src='tooltext.js'></script>")
                 $("head").append("<script src='tools/tools2.js'></script>")
                 $("head").append("<script src='tools/shapes.js'></script>")
 
 
                 that.toolbar = $((kendo.template(that._templates.toolbar))(that.options));
                 that.surfaceElement = $((kendo.template(that._templates.surface))(that.options));
-                that.tooltextwindow = $((kendo.template(that._templates.tooltextwindow))(that.options));
-                //
+
                 //
                 that.element.append(that.toolbar);
                 that.toolbarElement = new Toolbar(that);
-                that.element.append(that.surfaceElement).append(that.tooltextwindow);
-                // new ToolbarText(that);
+                that.element.append(that.surfaceElement);
+                that.windowToolText = GetWindowToolText(that);
+
 
                 that.drawing_data = [];
                 that.currentTool = new PointerTool(that);
@@ -79,8 +78,9 @@ $(function () {
             ,
             _templates: {
                 toolbar: "<div id='Toolbar_#= id #' style='width: #= width #;'></div>",
-                surface: '<div id="Surface_#= id #" style="width: #= width #; height: #= height #;border: 1px solid black;"></div>',
-                tooltextwindow: '<div id="TextToolWindow_#= id #" style="width: #= width #;"></div>'
+                surface: '<div id="Surface_#= id #" style="width: #= width #; height: #= height #;border: 1px solid gray;">' +
+                '<div id="WindowToolText_#= id #" style="width: #= width #;"></div>' +
+                '</div>'
             }
         });
 
@@ -89,3 +89,11 @@ $(function () {
     })(jQuery);
 });
 
+function GetWindowToolText(editor) {
+    var $windowToolText = $("#WindowToolText_" + editor.id);
+    $windowToolText.kendoWindowToolText({
+        width: 600,
+        visible: false
+    });
+    return $windowToolText.data("kendoWindowToolText");
+}

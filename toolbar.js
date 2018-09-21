@@ -44,7 +44,7 @@ function Toolbar(mainElement) {
                     {
                         id: "Text", icon: "image-editor16-text", togglable: true, group: "tool",
                         toggle: function () {
-
+                            selectTool(TextTool);
                         },
                         overflow: "never"
                     }
