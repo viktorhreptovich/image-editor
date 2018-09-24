@@ -145,21 +145,47 @@ function LineTool(element) {
 //********************* Text Tool **************************************************
 function TextTool(element) {
     this.name = "Text";
-    this.typeShape = Text1;
+    this.typeShape = Text;
     Tool.apply(this, arguments);
 
     this.click = function (e) {
-        // console.log("Open window tool text");
-        // element.windowToolText.open();
-        // element.windowToolText.Tool = this;
+        console.log("Open window tool text");
+        element.windowToolText.open();
+        element.windowToolText.Tool = this;
+        console.log(element.currentTool);
+        element.currentShape = new element.currentTool.typeShape(element);
+
+        element.surface = kendo.drawing.Surface.create(element.surfaceElement);
+        element.drawing_data.forEach(function (drawElement) {
+            element.surface.draw(drawElement.shape());
+        });
+        element.currentShape.endPoint = this.currentPoint;
+        element.surface.draw(element.currentShape.shape());
     }
 
-    // this.mousedown = function (e) {
-    //     this.startPoint = this.currentPoint;
-    // }
+    this.apply = function () {
+        element.currentShape.endPoint = this.currentPoint;
+        // element.drawing_data.push(element.currentShape);
+        element.currentShape = new element.currentTool.typeShape(element);
 
-    // this.mouseup = function (e) {
-    // }
+        // element.surface = kendo.drawing.Surface.create(element.surfaceElement);
+        // console.log(element.drawing_data);
+        // element.drawing_data.forEach(function (drawElement) {
+        //     element.surface.draw(drawElement.shape());
+        // });
+        element.surface = kendo.drawing.Surface.create(element.surfaceElement);
+        element.drawing_data.forEach(function (drawElement) {
+            element.surface.draw(drawElement.shape());
+        });
+        element.currentShape.endPoint = this.currentPoint;
+        element.surface.draw(element.currentShape.shape());
+    }
+
+    this.mousedown = function (e) {
+    }
+
+    this.mouseup = function (e) {
+    }
 
 }
 

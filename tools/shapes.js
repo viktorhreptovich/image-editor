@@ -1,7 +1,7 @@
-(function($) {
-    $.uuid = function() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+(function ($) {
+    $.uuid = function () {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
     };
@@ -108,22 +108,25 @@ function Line(element) {
         element.surface.draw(rec2);
     }
 
+}
 
-    //********************* Text *************************************************
-    function Text1(element) {
-        this.id = $.uuid();
-        this.startPoint = element.currentTool.startPoint;
-        this.endPoint = element.currentTool.currentPoint;
-        this.color = element.currentTool.color;
-        this.thickness = element.currentTool.thickness;
+//********************* Text *************************************************
+function Text(element) {
+    this.id = $.uuid();
+    this.startPoint = element.currentTool.startPoint;
+    this.endPoint = element.currentTool.currentPoint;
+    this.color = element.currentTool.color;
+    this.thickness = element.currentTool.thickness;
+    this.font = element.currentTool.font;
+    this.text = element.currentTool.text ? element.currentTool.text : "Enter text";
 
-        this.shape = function () {
-            return new kendo.drawing.Text("Test text", this.currentPoint, {
-                stroke: {
-                    color: this.color
-                }
-
-            });
-        }
+    this.shape = function () {
+        return new kendo.drawing.Text(this.text, this.endPoint, {
+            fill: {
+                color: this.color
+            },
+            font: this.font
+        });
     }
 }
+

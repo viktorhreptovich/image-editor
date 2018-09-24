@@ -14,8 +14,11 @@ $(function () {
             options: {
                 id: "Undefined",
                 name: "WindowToolText",
-                title: "INSERT TEXT"
+                title: "INSERT TEXT",
                 //visible:false
+                color: "black",
+                font: "Arial",
+                size: "12"
             },
             _create: function () {
 
@@ -37,10 +40,32 @@ $(function () {
 
 
                 kendo.bind(this.element, this.options);
+
+
+                var viewModel = kendo.observable({
+                    text: "",
+                    fontfamily: 'Arial, Helvetica, sans-serif',
+                    fontsize: '12px',
+                    textcolor: 'black',
+                    font: function () {
+                        return this.fontsize + ' ' + this.fontfamily;
+                    },
+                    onChangeText: function (e) {
+                        that.options.mainelement.currentTool.text = viewModel.text;
+                        that.options.mainelement.currentTool.color = viewModel.textcolor;
+                        that.options.mainelement.currentTool.font = viewModel.font();
+                        that.options.mainelement.currentTool.apply();
+                    }
+                });
+                kendo.bind(this.element, viewModel);
             },
             _templates: {
                 toolbar: '<div id="Toolbar_#: id #" style="width: 99%;"></div>',
-                textarea: '<textarea id="Editor_#: id #" class="k-textbox" style="width: 99%;height: 99%"></textarea>',
+
+                textarea: '<input id="Editor_#: id #" type="text" class="k-textbox" style="width: 99%;" ' +
+                'data-value-update="keyup" data-bind="value:text, style:{font-family:fontfamily,font-size:fontsize,color:fontcolor}, events:{keyup:onChangeText}" >' +
+                '</input>',
+
                 dialog: '<div id="Dialog_#: id #" style="margin-top:1em;float: right">' +
                 '<button id="Apply_#: id #">APPLY</button><button type="button" id="Cancel_#: id #">CANCEL</button> ' +
                 '</div>'
@@ -56,10 +81,10 @@ function WindowToolTextToolbar(element) {
     element.toolbar.kendoToolBar({
         items: [
             {
-                template: '<input id="dropdownFonts_' + element.id + '"/>'
+                template: '<input id="dropdownFonts_' + element.id + '" data-bind="value:fontfamily"/>'
             },
             {
-                template: '<input id="comboboxFontSize_' + element.id + '" style="width: 5em"/>',
+                template: '<input id="comboboxFontSize_' + element.id + '" style="width: 5em" data-bind="value:fontsize"/>',
                 overflow: "never"
             },
             {
@@ -71,7 +96,7 @@ function WindowToolTextToolbar(element) {
                 ]
             },
             {
-                template: '<input type="color" id="dropdownColor_' + element.id + '"/>'
+                template: '<input type="color" id="dropdownColor_' + element.id + '" data-bind="value:textcolor"/>'
             }
 
         ]
@@ -91,7 +116,11 @@ function WindowToolTextToolbar(element) {
                 {text: "Times New Roman", value: "'Times New Roman',Times,serif"},
                 {text: "Trebuchet MS", value: "'Trebuchet MS',Helvetica,sans-serif"},
                 {text: "Verdana", value: "Verdana,Geneva,sans-serif"}
-            ]
+            ],
+        change: function (e) {
+            var dataItem = this.dataItem(e.item);
+            element.options.font = dataItem.value;
+        }
         }
     );
 
@@ -103,36 +132,40 @@ function WindowToolTextToolbar(element) {
             dataValueField: "value",
             value: 12,
             dataSource: [
-                {value: "8"},
-                {value: "9"},
-                {value: "10"},
-                {value: "11"},
-                {value: "12"},
-                {value: "14"},
-                {value: "16"},
-                {value: "18"},
-                {value: "20"},
-                {value: "22"},
-                {value: "24"},
-                {value: "26"},
-                {value: "28"},
-                {value: "36"},
-                {value: "48"},
-                {value: "72"}
+                {text: "8", value: "8px"}, {text: "9", value: "9px"}, {text: "10", value: "10px"}, {
+                    text: "11",
+                    value: "11px"
+                },
+                {text: "12", value: "12px"}, {text: "14", value: "14px"}, {text: "16", value: "16px"}, {
+                    text: "18",
+                    value: "18px"
+                },
+                {text: "20", value: "20px"}, {text: "22", value: "22px"}, {text: "24", value: "24px"}, {
+                    text: "26",
+                    value: "26px"
+                },
+                {text: "28", value: "28px"}, {text: "36", value: "36px"}, {text: "48", value: "48px"}, {
+                    text: "72",
+                    value: "72px"
+                }
             ]
         }
     );
 
     $("#dropdownColor_" + element.id).kendoColorPicker({
         palette: "basic",
-        value: "black",
-        change: function (e) {
-            mainElement.currentTool.color = e.value;
-        }
+        value: "black"
     });
 
     $("#Apply_" + element.id).kendoButton({
-        icon: "check-outline"
+        icon: "check-outline",
+        click: function (e) {
+            element.options.mainelement.currentTool.color = viewModel.textcolor;
+            element.options.mainelement.currentTool.font = viewModel.font();
+            element.options.mainelement.currentTool.apply();
+            element.close();
+
+        }
     });
 
     $("#Cancel_" + element.id).kendoButton({
@@ -143,3 +176,5 @@ function WindowToolTextToolbar(element) {
     });
 
 }
+
+

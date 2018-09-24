@@ -33,9 +33,9 @@ $(function () {
                 that.options.height += "px";
 
                 //add js import
-                $("head").append("<script src='toolbar.js'></script>")
-                $("head").append("<script src='tools/tools2.js'></script>")
-                $("head").append("<script src='tools/shapes.js'></script>")
+                // $("head").append("<script src='toolbar.js'></script>")
+                // $("head").append("<script src='tools/tools2.js'></script>")
+                // $("head").append("<script src='tools/shapes.js'></script>")
 
 
                 that.toolbar = $((kendo.template(that._templates.toolbar))(that.options));
@@ -93,7 +93,8 @@ function GetWindowToolText(editor) {
     var $windowToolText = $("#WindowToolText_" + editor.id);
     $windowToolText.kendoWindowToolText({
         width: 600,
-        visible: false
+        visible: false,
+        mainelement: editor
     });
     return $windowToolText.data("kendoWindowToolText");
 }
