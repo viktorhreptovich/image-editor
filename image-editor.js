@@ -34,43 +34,50 @@ $(function () {
 
                 //add js import
                 // $("head").append("<script src='toolbar.js'></script>")
-                // $("head").append("<script src='tools/tools2.js'></script>")
+                // $("head").append("<script src='tools/tools.js'></script>")
                 // $("head").append("<script src='tools/shapes.js'></script>")
 
 
-                that.toolbar = $((kendo.template(that._templates.toolbar))(that.options));
-                that.surfaceElement = $((kendo.template(that._templates.surface))(that.options));
+                that.elementToolbar = $((kendo.template(that._templates.toolbar))(that.options));
+                that.elementSurface = $((kendo.template(that._templates.surface))(that.options));
 
                 //
-                that.element.append(that.toolbar);
-                that.toolbarElement = new Toolbar(that);
-                that.element.append(that.surfaceElement);
-                that.windowToolText = GetWindowToolText(that);
+                that.element.append(that.elementToolbar);
+                that.toolbar = new Toolbar(that);
+                that.element.append(that.elementSurface);
+                that.windowToolText = WindowToolText(that);
 
 
                 that.drawing_data = [];
                 that.currentTool = new PointerTool(that);
                 that.shapeSelected = false;
 
+                that.redraw = function () {
+                    that.surface = kendo.drawing.Surface.create(that.elementSurface);
+                    that.drawing_data.forEach(function (drawElement) {
+                        that.surface.draw(drawElement.shape());
+                    });
+                }
+
                 kendo.bind(that.element, that.options);
             },
             _init_events: function () {
                 var that = this;
-                $(that.surfaceElement).bind("click", function (e) {
+                $(that.elementSurface).bind("click", function (e) {
                     that.currentTool.click(e);
                 });
-                $(that.surfaceElement).bind("click", function (e) {
+                $(that.elementSurface).bind("click", function (e) {
 
-                    that.toolbarElement.clickSurface(e);
+                    that.toolbar.clickSurface(e);
                 });
-                $(that.surfaceElement).on("mousemove", function (e) {
+                $(that.elementSurface).on("mousemove", function (e) {
                     that.currentTool.mousemove(e);
                 });
-                $(that.surfaceElement).on("mousedown", function (e) {
+                $(that.elementSurface).on("mousedown", function (e) {
                     that.currentTool.mousedown(e);
                     console.log("Mouse down");
                 });
-                $(that.surfaceElement).on("mouseup", function (e) {
+                $(that.elementSurface).on("mouseup", function (e) {
                     that.currentTool.mouseup(e);
                     console.log("Mouse up");
                 });
@@ -89,12 +96,10 @@ $(function () {
     })(jQuery);
 });
 
-function GetWindowToolText(editor) {
-    var $windowToolText = $("#WindowToolText_" + editor.id);
-    $windowToolText.kendoWindowToolText({
-        width: 600,
+function WindowToolText(imageEditor) {
+    return $("#WindowToolText_" + imageEditor.id).kendoWindowToolText({
+        width: imageEditor.options.height,
         visible: false,
-        mainelement: editor
-    });
-    return $windowToolText.data("kendoWindowToolText");
+        mainelement: imageEditor
+    }).data("kendoWindowToolText");
 }

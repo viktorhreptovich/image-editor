@@ -42,7 +42,7 @@ $(function () {
                 kendo.bind(this.element, this.options);
 
 
-                var viewModel = kendo.observable({
+                this.viewModel = kendo.observable({
                     text: "",
                     fontfamily: 'Arial, Helvetica, sans-serif',
                     fontsize: '12px',
@@ -51,13 +51,13 @@ $(function () {
                         return this.fontsize + ' ' + this.fontfamily;
                     },
                     onChangeText: function (e) {
-                        that.options.mainelement.currentTool.text = viewModel.text;
-                        that.options.mainelement.currentTool.color = viewModel.textcolor;
-                        that.options.mainelement.currentTool.font = viewModel.font();
-                        that.options.mainelement.currentTool.apply();
+                        that.options.mainelement.currentTool.text = that.viewModel.text;
+                        that.options.mainelement.currentTool.color = that.viewModel.textcolor;
+                        that.options.mainelement.currentTool.font = that.viewModel.font();
+                        that.options.mainelement.currentTool.tempdraw();
                     }
                 });
-                kendo.bind(this.element, viewModel);
+                kendo.bind(this.element, this.viewModel);
             },
             _templates: {
                 toolbar: '<div id="Toolbar_#: id #" style="width: 99%;"></div>',
@@ -80,13 +80,8 @@ function WindowToolTextToolbar(element) {
 
     element.toolbar.kendoToolBar({
         items: [
-            {
-                template: '<input id="dropdownFonts_' + element.id + '" data-bind="value:fontfamily"/>'
-            },
-            {
-                template: '<input id="comboboxFontSize_' + element.id + '" style="width: 5em" data-bind="value:fontsize"/>',
-                overflow: "never"
-            },
+            {template: '<input id="dropdownFonts_' + element.id + '" data-bind="value:fontfamily"/>'},
+            {template: '<input id="comboboxFontSize_' + element.id + '" style="width: 5em" data-bind="value:fontsize"/>', overflow: "never"},
             {
                 type: "buttonGroup",
                 buttons: [
@@ -95,9 +90,7 @@ function WindowToolTextToolbar(element) {
                     {icon: "underline", togglable: true}
                 ]
             },
-            {
-                template: '<input type="color" id="dropdownColor_' + element.id + '" data-bind="value:textcolor"/>'
-            }
+            {template: '<input type="color" id="dropdownColor_' + element.id + '" data-bind="value:textcolor"/>'}
 
         ]
     });
@@ -116,54 +109,35 @@ function WindowToolTextToolbar(element) {
                 {text: "Times New Roman", value: "'Times New Roman',Times,serif"},
                 {text: "Trebuchet MS", value: "'Trebuchet MS',Helvetica,sans-serif"},
                 {text: "Verdana", value: "Verdana,Geneva,sans-serif"}
-            ],
-        change: function (e) {
-            var dataItem = this.dataItem(e.item);
-            element.options.font = dataItem.value;
-        }
-        }
-    );
-
-    var $comboboxFontSize = $("#comboboxFontSize_" + element.id)
-
-    $comboboxFontSize.kendoComboBox({
-        clearButton: false,
-            dataTextField: "value",
-            dataValueField: "value",
-            value: 12,
-            dataSource: [
-                {text: "8", value: "8px"}, {text: "9", value: "9px"}, {text: "10", value: "10px"}, {
-                    text: "11",
-                    value: "11px"
-                },
-                {text: "12", value: "12px"}, {text: "14", value: "14px"}, {text: "16", value: "16px"}, {
-                    text: "18",
-                    value: "18px"
-                },
-                {text: "20", value: "20px"}, {text: "22", value: "22px"}, {text: "24", value: "24px"}, {
-                    text: "26",
-                    value: "26px"
-                },
-                {text: "28", value: "28px"}, {text: "36", value: "36px"}, {text: "48", value: "48px"}, {
-                    text: "72",
-                    value: "72px"
-                }
             ]
         }
     );
 
-    $("#dropdownColor_" + element.id).kendoColorPicker({
-        palette: "basic",
-        value: "black"
-    });
+    $("#comboboxFontSize_" + element.id).kendoComboBox({
+        clearButton: false, dataTextField: "value", dataValueField: "value", value: 12,
+            dataSource: [
+                {text: "8", value: "8px"}, {text: "9", value: "9px"}, {text: "10", value: "10px"}, {text: "11", value: "11px"},
+                {text: "12", value: "12px"}, {text: "14", value: "14px"}, {text: "16", value: "16px"}, {text: "18", value: "18px"},
+                {text: "20", value: "20px"}, {text: "22", value: "22px"}, {text: "24", value: "24px"}, {text: "26", value: "26px"},
+                {text: "28", value: "28px"}, {text: "36", value: "36px"}, {text: "48", value: "48px"}, {text: "72", value: "72px"}
+            ]
+        }
+    );
+
+    $("#dropdownColor_" + element.id).kendoColorPicker({palette: "basic", value: "black"});
 
     $("#Apply_" + element.id).kendoButton({
         icon: "check-outline",
         click: function (e) {
-            element.options.mainelement.currentTool.color = viewModel.textcolor;
-            element.options.mainelement.currentTool.font = viewModel.font();
-            element.options.mainelement.currentTool.apply();
+            if (element.viewModel.text.length > 0) {
+                element.options.mainelement.currentTool.color = element.viewModel.textcolor;
+                element.options.mainelement.currentTool.font = element.viewModel.font();
+                element.options.mainelement.currentTool.apply();
+                element.textarea.val("");
+                element.options.mainelement.currentTool.text = undefined;
+            }
             element.close();
+            element.options.mainelement.redraw();
 
         }
     });
@@ -172,6 +146,9 @@ function WindowToolTextToolbar(element) {
         icon: "cancel",
         click: function (e) {
             element.close();
+            element.options.mainelement.redraw();
+            element.textarea.val("");
+            element.options.mainelement.currentTool.text = undefined;
         }
     });
 

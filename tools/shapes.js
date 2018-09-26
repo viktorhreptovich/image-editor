@@ -7,11 +7,19 @@
     };
 })(jQuery);
 
-//********************* Pencil *************************************************
-function Pencil(element) {
+function Shape(element) {
     this.id = $.uuid();
+    this.startPoint = element.currentTool.startPoint;
+    this.endPoint = element.currentTool.currentPoint;
     this.color = element.currentTool.color;
     this.thickness = element.currentTool.thickness;
+}
+
+
+//********************* Pencil *************************************************
+function Pencil(element) {
+    Shape.apply(this, arguments);
+
     this.multipath = [];
     this.multipath.push(element.currentTool.startPoint);
 
@@ -37,11 +45,7 @@ function Pencil(element) {
 
 //********************* Line *************************************************
 function Line(element) {
-    this.id = $.uuid();
-    this.startPoint = element.currentTool.startPoint;
-    this.endPoint = element.currentTool.currentPoint;
-    this.color = element.currentTool.color;
-    this.thickness = element.currentTool.thickness;
+    Shape.apply(this, arguments);
 
     this.shape = function () {
         return new kendo.drawing.Path({
@@ -110,23 +114,70 @@ function Line(element) {
 
 }
 
+//********************* Rectangle *************************************************
+function Rectangle(element) {
+    Shape.apply(this, arguments);
+
+    this.shape = function () {
+        var newx = Math.abs((this.endPoint.x - this.startPoint.x));
+        var newy = Math.abs((this.endPoint.y - this.startPoint.y));
+        var startX = (this.endPoint.x - this.startPoint.x) > 0 ? this.startPoint.x : this.endPoint.x;
+        var startY = (this.endPoint.y - this.startPoint.y) > 0 ? (this.endPoint.y - newy) : this.endPoint.y;
+        return new kendo.drawing.Rect(new kendo.geometry.Rect([startX, startY], [newx, newy]), {
+            stroke: {
+                color: this.color,
+                width: this.thickness
+            }
+        });
+    }
+}
+
+//********************* Circle *************************************************
+function Circle(element) {
+    Shape.apply(this, arguments);
+
+    this.shape = function () {
+        var radius = this.getDistance(this.endPoint, this.startPoint);
+        return new kendo.drawing.Circle(new kendo.geometry.Circle([this.startPoint.x, this.startPoint.y], radius), {
+            stroke: {
+                color: this.color,
+                width: this.thickness
+            }
+        });
+    }
+
+    this.getDistance = function (point1, point2) {
+        return Math.sqrt(Math.pow((point2.x - point1.x), 2) + Math.pow((point2.y - point1.y), 2));
+    }
+}
+
 //********************* Text *************************************************
 function Text(element) {
-    this.id = $.uuid();
-    this.startPoint = element.currentTool.startPoint;
-    this.endPoint = element.currentTool.currentPoint;
-    this.color = element.currentTool.color;
-    this.thickness = element.currentTool.thickness;
+    Shape.apply(this, arguments);
     this.font = element.currentTool.font;
     this.text = element.currentTool.text ? element.currentTool.text : "Enter text";
 
     this.shape = function () {
-        return new kendo.drawing.Text(this.text, this.endPoint, {
+        return new kendo.drawing.Text(this.text, this.startPoint, {
             fill: {
                 color: this.color
             },
             font: this.font
         });
+    }
+
+    this.selectShape = function () {
+        var group = draw.Group;
+        var temptext = new kendo.drawing.Text(this.text, this.startPoint, {
+            fill: {
+                color: this.color
+            },
+            font: this.font
+        });
+        var tempbox = temptext.bbox();
+        group.append(temptext);
+        group.append(tempbox);
+        return group;
     }
 }
 

@@ -8,8 +8,8 @@ function Toolbar(imageEditor) {
                     {id: "PointerTool", icon: "image-editor16-pointer", togglable: true, group: "tool", selected: true, overflow: "never"},
                     {id: "PencilTool", icon: "image-editor16-pencil", togglable: true, group: "tool", overflow: "never"},
                     {id: "LineTool", icon: "image-editor16-line", togglable: true, group: "tool", overflow: "never"},
-                    {id: "RectangleTool", icon: "image-editor16-rectangle", togglable: false, group: "tool", overflow: "never"},
-                    {id: "CircleTool", icon: "image-editor16-circle", togglable: false, group: "tool", overflow: "never"},
+                    {id: "RectangleTool", icon: "image-editor16-rectangle", togglable: true, group: "tool", overflow: "never"},
+                    {id: "CircleTool", icon: "image-editor16-circle", togglable: true, group: "tool", overflow: "never"},
                     {id: "TextTool", icon: "image-editor16-text", togglable: true, group: "tool", overflow: "never"}
                 ]
             },
@@ -54,7 +54,7 @@ function Toolbar(imageEditor) {
     );
 
     this.clickSurface = function (e) {
-        $(imageEditor.toolbar).data("kendoToolBar").enable("#clear", imageEditor.shapeSelected);
+        $(imageEditor.elementToolbar).data("kendoToolBar").enable("#clear", imageEditor.shapeSelected);
     }
 
     function clickClear() {
@@ -62,7 +62,7 @@ function Toolbar(imageEditor) {
             console.log(value.id + "!=" + imageEditor.shapeSelect.id);
             return value.id != imageEditor.shapeSelect.id;
         });
-        imageEditor.currentTool.redrow();
+        imageEditor.redraw();
     }
 
 
