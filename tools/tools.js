@@ -27,7 +27,6 @@ function Tool(imageEditor) {
             imageEditor.currentShape.endPoint = this.currentPoint;
             imageEditor.surface.draw(imageEditor.currentShape.shape());
         }
-
     }
 
     this.mousedown = function (e) {
@@ -143,21 +142,57 @@ function TextTool(imageEditor) {
     this.name = "Text";
     this.typeShape = Text;
     Tool.apply(this, arguments);
+    this.startdraw = false;
+    this.dragged = false;
+    this.startdragged = false;
 
     this.click = function (e) {
-        console.log("Open window tool text");
-        imageEditor.windowToolText.open();
-        imageEditor.windowToolText.Tool = this;
-        console.log(imageEditor.currentTool);
-        imageEditor.currentShape = new imageEditor.currentTool.typeShape(imageEditor);
+        if (!this.startdraw) {
+            this.startPoint = this.currentPoint;
+            imageEditor.windowToolText.open();
+            imageEditor.windowToolText.Tool = this;
+            console.log(imageEditor.currentTool);
+            imageEditor.currentShape = new imageEditor.currentTool.typeShape(imageEditor);
 
-        imageEditor.surface = kendo.drawing.Surface.create(imageEditor.elementSurface);
-        imageEditor.drawing_data.forEach(function (drawElement) {
-            imageEditor.surface.draw(drawElement.shape());
-        });
-        imageEditor.currentShape.endPoint = this.currentPoint;
-        imageEditor.surface.draw(imageEditor.currentShape.shape());
+            imageEditor.surface = kendo.drawing.Surface.create(imageEditor.elementSurface);
+            imageEditor.drawing_data.forEach(function (drawElement) {
+                imageEditor.surface.draw(drawElement.shape());
+            });
+            imageEditor.currentShape.endPoint = this.currentPoint;
+            imageEditor.surface.draw(imageEditor.currentShape.tempShape());
+            this.startdraw = true;
+        }
     }
+
+    this.mousemove = function (e) {
+        var offset = imageEditor.elementSurface.offset();
+        var x = e.pageX - Math.round(offset.left);
+        var y = e.pageY - Math.round(offset.top);
+        this.currentPoint = new kendo.geometry.Point(x, y);
+
+        // if (this.startdraw) {
+        //     imageEditor.surface = kendo.drawing.Surface.create(imageEditor.elementSurface);
+        //     imageEditor.drawing_data.forEach(function (drawElement) {
+        //         imageEditor.surface.draw(drawElement.shape());
+        //     });
+        //     imageEditor.currentShape.endPoint = this.currentPoint;
+        //     imageEditor.surface.draw(imageEditor.currentShape.selectShape());
+        // }
+
+        if (this.startdraw && imageEditor.currentShape.tempShape().containsPoint(imageEditor.currentTool.currentPoint)) {
+            this.dragged = true;
+            return false;
+        } else {
+            this.dragged = false;
+        }
+
+        if (this.startdraw && this.startdragged) {
+            this.startPoint = this.currentPoint;
+            this.tempdraw();
+        }
+
+    }
+
 
     this.apply = function () {
         imageEditor.currentShape.endPoint = this.currentPoint;
@@ -172,11 +207,13 @@ function TextTool(imageEditor) {
     }
 
     this.mousedown = function (e) {
-        this.startPoint = this.currentPoint;
-        imageEditor.currentShape = new imageEditor.currentTool.typeShape(imageEditor);
+        if (this.dragged) {
+            this.startdragged = true;
+        }
     }
 
     this.mouseup = function (e) {
+        this.startdragged = false;
     }
 
 
@@ -186,7 +223,7 @@ function TextTool(imageEditor) {
         imageEditor.drawing_data.forEach(function (drawElement) {
             imageEditor.surface.draw(drawElement.shape());
         });
-        imageEditor.surface.draw(imageEditor.currentShape.shape());
+        imageEditor.surface.draw(imageEditor.currentShape.tempShape());
     }
 }
 
