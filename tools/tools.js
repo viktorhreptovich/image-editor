@@ -1,29 +1,29 @@
+var Point = kendo.geometry.Point;
+
+function getCurrentPoint(e, elementEditor) {
+    var offset = elementEditor.elementSurface.offset();
+    var x = e.pageX - offset.left;
+    var y = e.pageY - Math.round(offset.top);
+    return new Point(x, y);
+}
+
 function Tool(imageEditor) {
-
     console.log("Tool created:" + this.name);
-    var Point = kendo.geometry.Point;
-
+    if (imageEditor.shapesselected()) {
+        imageEditor.reset();
+        imageEditor.redraw();
+    }
     //fields
     this.startPoint = new Point(0, 0);
     this.currentPoint = new Point(0, 0);
     this.startdraw = false;
+    this.startdragged = false;
     //endfields
 
-    this.click = function (e) {
-
-    }
-
     this.mousemove = function (e) {
-        var offset = imageEditor.elementSurface.offset();
-        var x = e.pageX - Math.round(offset.left);
-        var y = e.pageY - Math.round(offset.top);
-        this.currentPoint = new Point(x, y);
-
+        this.currentPoint = getCurrentPoint(e, imageEditor);
         if (this.startdraw) {
-            imageEditor.surface = kendo.drawing.Surface.create(imageEditor.elementSurface);
-            imageEditor.drawing_data.forEach(function (drawElement) {
-                imageEditor.surface.draw(drawElement.shape());
-            });
+            imageEditor.redraw();
             imageEditor.currentShape.endPoint = this.currentPoint;
             imageEditor.surface.draw(imageEditor.currentShape.shape());
         }
@@ -39,55 +39,57 @@ function Tool(imageEditor) {
         if (this.startdraw) {
             imageEditor.currentShape.endPoint = this.currentPoint;
             imageEditor.drawing_data.push(imageEditor.currentShape);
-            this.currentShape = undefined;
+            imageEditor.currentShape = undefined;
             this.startdraw = false;
-
-            imageEditor.surface = kendo.drawing.Surface.create(imageEditor.elementSurface);
-            console.log(imageEditor.drawing_data);
-            imageEditor.drawing_data.forEach(function (drawElement) {
-                imageEditor.surface.draw(drawElement.shape());
-            });
+            imageEditor.redraw();
         }
     }
-
 };
 
 //********************* Pointer Tool **************************************************
 function PointerTool(imageEditor) {
     this.name = "Pointer";
-    var Point = kendo.geometry.Point;
     Tool.apply(this, arguments);
 
     this.mousemove = function (e) {
-        var offset = imageEditor.elementSurface.offset();
-        var x = e.pageX - offset.left;
-        var y = e.pageY - Math.round(offset.top);
-        this.currentPoint = new Point(x, y);
-
-        $.each(imageEditor.drawing_data, function (index, value) {
-            if (value.containsPoint(imageEditor.currentTool.currentPoint)) {
-                imageEditor.findedShape = value;
-                return false;
-            } else {
-                imageEditor.findedShape = undefined;
-            }
-        });
+        this.currentPoint = getCurrentPoint(e, imageEditor);
+        if (this.startdragged) {
+            imageEditor.findedShape.moveShape(
+                {
+                    x: (this.offsetdragged.x - this.currentPoint.x),
+                    y: (this.offsetdragged.y - this.currentPoint.y)
+                }
+            );
+            this.offsetdragged = this.currentPoint;
+            imageEditor.redraw();
+        } else {
+            imageEditor.findedShape = undefined;
+            $.each(imageEditor.drawing_data, function (index, value) {
+                if (value.containsPoint(imageEditor.currentTool.currentPoint)) {
+                    imageEditor.findedShape = value;
+                    return false;
+                }
+            });
+        }
     }
 
     this.click = function (e) {
-        console.log(imageEditor.findedShape);
         if (imageEditor.findedShape != undefined) {
-            imageEditor.findedShape.selectShape();
-            imageEditor.shapeSelect = imageEditor.findedShape;
-            imageEditor.shapeSelected = true;
+            imageEditor.findedShape.selected = !imageEditor.findedShape.selected;
         }
+        imageEditor.redraw();
     }
 
     this.mousedown = function (e) {
         this.startPoint = this.currentPoint;
+        if (imageEditor.findedShape != undefined) {
+            this.startdragged = true;
+            this.offsetdragged = this.currentPoint;
+        }
     }
 
     this.mouseup = function (e) {
+        this.startdragged = false;
     }
 }
 
@@ -97,19 +99,11 @@ function PencilTool(imageEditor) {
     this.typeShape = Pencil;
     Tool.apply(this, arguments);
 
-
     this.mousemove = function (e) {
-        var offset = imageEditor.elementSurface.offset();
-        var x = e.pageX - offset.left;
-        var y = e.pageY - Math.round(offset.top);
-        this.currentPoint = new kendo.geometry.Point(x, y);
-
+        this.currentPoint = getCurrentPoint(e, imageEditor);
         if (this.startdraw) {
             imageEditor.currentShape.multipath.push(this.currentPoint);
-            imageEditor.surface = kendo.drawing.Surface.create(imageEditor.elementSurface);
-            imageEditor.drawing_data.forEach(function (drawElement) {
-                imageEditor.surface.draw(drawElement.shape());
-            });
+            imageEditor.redraw();
             imageEditor.surface.draw(imageEditor.currentShape.shape());
         }
     }
@@ -143,7 +137,7 @@ function TextTool(imageEditor) {
     this.typeShape = Text;
     Tool.apply(this, arguments);
     this.startdraw = false;
-    this.dragged = false;
+    this.draggable = false;
     this.startdragged = false;
 
     this.click = function (e) {
@@ -165,32 +159,17 @@ function TextTool(imageEditor) {
     }
 
     this.mousemove = function (e) {
-        var offset = imageEditor.elementSurface.offset();
-        var x = e.pageX - Math.round(offset.left);
-        var y = e.pageY - Math.round(offset.top);
-        this.currentPoint = new kendo.geometry.Point(x, y);
-
-        // if (this.startdraw) {
-        //     imageEditor.surface = kendo.drawing.Surface.create(imageEditor.elementSurface);
-        //     imageEditor.drawing_data.forEach(function (drawElement) {
-        //         imageEditor.surface.draw(drawElement.shape());
-        //     });
-        //     imageEditor.currentShape.endPoint = this.currentPoint;
-        //     imageEditor.surface.draw(imageEditor.currentShape.selectShape());
-        // }
-
-        if (this.startdraw && imageEditor.currentShape.tempShape().containsPoint(imageEditor.currentTool.currentPoint)) {
-            this.dragged = true;
+        this.currentPoint = getCurrentPoint(e, imageEditor);
+        if (this.startdraw && imageEditor.currentShape.tempShape().containsPoint(this.currentPoint)) {
+            this.draggable = true;
             return false;
         } else {
-            this.dragged = false;
+            this.draggable = false;
         }
-
         if (this.startdraw && this.startdragged) {
             this.startPoint = this.currentPoint;
             this.tempdraw();
         }
-
     }
 
 
@@ -198,16 +177,21 @@ function TextTool(imageEditor) {
         imageEditor.currentShape.endPoint = this.currentPoint;
         imageEditor.currentShape = new imageEditor.currentTool.typeShape(imageEditor);
         imageEditor.drawing_data.push(imageEditor.currentShape);
-        this.currentShape = undefined;
+        imageEditor.currentShape = undefined;
+        this.text = undefined;
+        imageEditor.redraw();
+        this.startdraw = false;
+    }
 
-        imageEditor.surface = kendo.drawing.Surface.create(imageEditor.elementSurface);
-        imageEditor.drawing_data.forEach(function (drawElement) {
-            imageEditor.surface.draw(drawElement.shape());
-        });
+    this.cancel = function () {
+        imageEditor.currentShape = undefined;
+        this.text = undefined;
+        imageEditor.redraw();
+        this.startdraw = false;
     }
 
     this.mousedown = function (e) {
-        if (this.dragged) {
+        if (this.draggable) {
             this.startdragged = true;
         }
     }
@@ -219,11 +203,7 @@ function TextTool(imageEditor) {
 
     this.tempdraw = function () {
         imageEditor.currentShape = new imageEditor.currentTool.typeShape(imageEditor);
-        imageEditor.surface = kendo.drawing.Surface.create(imageEditor.elementSurface);
-        imageEditor.drawing_data.forEach(function (drawElement) {
-            imageEditor.surface.draw(drawElement.shape());
-        });
+        imageEditor.redraw();
         imageEditor.surface.draw(imageEditor.currentShape.tempShape());
     }
 }
-

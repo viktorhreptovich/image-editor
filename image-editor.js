@@ -5,10 +5,7 @@ $(function () {
     (function ($) {
         var kendo = window.kendo,
             ui = kendo.ui,
-            Widget = ui.Widget,
-            drawing = kendo.drawing,
-            geometry = kendo.geometry;
-
+            Widget = ui.Widget;
 
         var ImageEditor = Widget.extend({
             init: function (element, options) {
@@ -22,10 +19,9 @@ $(function () {
                 name: "ImageEditor",
                 width: 0,
                 height: 0,
-                imageurl: ""
+                image: ""
             },
             _create: function () {
-
                 var that = this;
                 that.id = that.element.attr('id');
                 that.options.id = that.element.attr('id');
@@ -37,27 +33,35 @@ $(function () {
                 // $("head").append("<script src='tools/tools.js'></script>")
                 // $("head").append("<script src='tools/shapes.js'></script>")
 
-
                 that.elementToolbar = $((kendo.template(that._templates.toolbar))(that.options));
                 that.elementSurface = $((kendo.template(that._templates.surface))(that.options));
 
-                //
                 that.element.append(that.elementToolbar);
                 that.toolbar = new Toolbar(that);
                 that.element.append(that.elementSurface);
                 that.windowToolText = WindowToolText(that);
 
+                that.redraw = function () {
+                    that.surface = kendo.drawing.Surface.create(that.elementSurface);
+                    $.each(that.drawing_data, function (index, drawElement){
+                        that.surface.draw(drawElement.shape());
+                    });
+                };
+
+                that.shapesselected = function () {
+                    return that.drawing_data.filter(function (value) {
+                        return value.selected;
+                    }).length > 0;
+                };
+
+                that.reset = function () {
+                    $.each(that.drawing_data, function (index, shape){
+                        shape.selected = false;
+                    });
+                };
 
                 that.drawing_data = [];
                 that.currentTool = new PointerTool(that);
-                that.shapeSelected = false;
-
-                that.redraw = function () {
-                    that.surface = kendo.drawing.Surface.create(that.elementSurface);
-                    that.drawing_data.forEach(function (drawElement) {
-                        that.surface.draw(drawElement.shape());
-                    });
-                }
 
                 kendo.bind(that.element, that.options);
             },
@@ -67,7 +71,6 @@ $(function () {
                     that.currentTool.click(e);
                 });
                 $(that.elementSurface).bind("click", function (e) {
-
                     that.toolbar.clickSurface(e);
                 });
                 $(that.elementSurface).on("mousemove", function (e) {
@@ -75,19 +78,17 @@ $(function () {
                 });
                 $(that.elementSurface).on("mousedown", function (e) {
                     that.currentTool.mousedown(e);
-                    console.log("Mouse down");
                 });
                 $(that.elementSurface).on("mouseup", function (e) {
                     that.currentTool.mouseup(e);
-                    console.log("Mouse up");
                 });
             }
             ,
             _templates: {
                 toolbar: "<div id='Toolbar_#= id #' style='width: #= width #;'></div>",
-                surface: '<div id="Surface_#= id #" style="width: #= width #; height: #= height #;border: 1px solid gray;">' +
-                '<div id="WindowToolText_#= id #" style="width: #= width #;"></div>' +
-                '</div>'
+                surface: '<div id="Surface_#= id #" style="width: #= width #; height: #= height #;border: 1px solid gray; ' +
+                'background: url(#= image #); background-size: #: width # #: height #; ">' +
+                '<div id="WindowToolText_#= id #" style="width: #= width #;"></div></div>'
             }
         });
 
@@ -98,8 +99,6 @@ $(function () {
 
 function WindowToolText(imageEditor) {
     return $("#WindowToolText_" + imageEditor.id).kendoWindowToolText({
-        width: imageEditor.options.height,
-        visible: false,
-        mainelement: imageEditor
+        width: imageEditor.options.width, visible: false, mainelement: imageEditor
     }).data("kendoWindowToolText");
 }

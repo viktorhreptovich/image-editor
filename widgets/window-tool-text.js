@@ -5,7 +5,6 @@ $(function () {
             Widget = ui.Window,
             drawing = kendo.drawing;
 
-
         var WindowToolText = Widget.extend({
             init: function (element, options) {
                 Widget.fn.init.call(this, element, options);
@@ -15,7 +14,6 @@ $(function () {
                 id: "Undefined",
                 name: "WindowToolText",
                 title: "INSERT TEXT",
-                //visible:false
                 color: "black",
                 font: "Arial",
                 size: "12"
@@ -27,7 +25,6 @@ $(function () {
                 this.options.width += "px";
                 this.options.height += "px";
 
-
                 this.toolbar = $((kendo.template(this._templates.toolbar))(this.options));
                 this.textarea = $((kendo.template(this._templates.textarea))(this.options));
                 this.dialog = $((kendo.template(this._templates.dialog))(this.options));
@@ -38,23 +35,30 @@ $(function () {
                 var that = this;
                 this.toolbarElement = WindowToolTextToolbar(that);
 
-
                 kendo.bind(this.element, this.options);
-
 
                 this.viewModel = kendo.observable({
                     text: "",
                     fontfamily: 'Arial, Helvetica, sans-serif',
                     fontsize: '12px',
-                    textcolor: 'black',
+                    fontcolor: 'black',
+                    fontbold:false,
+                    fontitalic: 'normal',
+                    fontunderline:'none',
                     font: function () {
-                        return this.fontsize + ' ' + this.fontfamily;
+                        return this.fontsize + ' ' + this.fontfamily + ' ' + this.fontbold;
                     },
                     onChangeText: function (e) {
                         that.options.mainelement.currentTool.text = that.viewModel.text;
-                        that.options.mainelement.currentTool.color = that.viewModel.textcolor;
+                        that.options.mainelement.currentTool.color = that.viewModel.fontcolor;
                         that.options.mainelement.currentTool.font = that.viewModel.font();
                         that.options.mainelement.currentTool.tempdraw();
+                    },
+                    isBold:function () {
+                      return (this.fontbold)?'bold':'normal';
+                    },
+                    clickBold:function () {
+                      alert('Bold click');
                     }
                 });
                 kendo.bind(this.element, this.viewModel);
@@ -63,8 +67,8 @@ $(function () {
                 toolbar: '<div id="Toolbar_#: id #" style="width: 99%;"></div>',
 
                 textarea: '<input id="Editor_#: id #" type="text" class="k-textbox" style="width: 99%;" ' +
-                'data-value-update="keyup" data-bind="value:text, style:{font-family:fontfamily,font-size:fontsize,color:fontcolor}, events:{keyup:onChangeText}" >' +
-                '</input>',
+                'data-value-update="keyup" data-bind="value:text,' +
+                ' style:{fontFamily:fontfamily,fontWeight:isBold,fontStyle:fontitalic,textDecoration:fontunderline,fontSize:fontsize,color:fontcolor}, events:{keyup:onChangeText}" />',
 
                 dialog: '<div id="Dialog_#: id #" style="margin-top:1em;float: right">' +
                 '<button id="Apply_#: id #">APPLY</button><button type="button" id="Cancel_#: id #">CANCEL</button> ' +
@@ -85,15 +89,24 @@ function WindowToolTextToolbar(element) {
             {
                 type: "buttonGroup",
                 buttons: [
-                    {icon: "bold", togglable: true},
-                    {icon: "italic", togglable: true},
-                    {icon: "underline", togglable: true}
+                    {icon: "bold", togglable: true, toggle:toggleBold},
+                    {icon: "italic", togglable: true, toggle:toggleItalic},
+                    {icon: "underline", togglable: true,toggle:toggleUnderline}
                 ]
             },
-            {template: '<input type="color" id="dropdownColor_' + element.id + '" data-bind="value:textcolor"/>'}
-
+            {template: '<input type="color" id="dropdownColor_' + element.id + '" data-bind="value:fontcolor"/>'}
         ]
     });
+
+    function toggleBold(e) {
+        element.viewModel.set("fontbold",(e.checked));
+    }
+    function toggleItalic(e){
+        element.viewModel.fontitalic = (e.checked)?'italic':'normal';
+    }
+    function toggleUnderline(e){
+        element.viewModel.fontunderline = (e.checked)?'underline':'none';
+    }
 
     $("#dropdownFonts_" + element.id).kendoDropDownList({
             dataTextField: "text",
@@ -134,7 +147,6 @@ function WindowToolTextToolbar(element) {
                 element.options.mainelement.currentTool.font = element.viewModel.font();
                 element.options.mainelement.currentTool.apply();
                 element.textarea.val("");
-                element.options.mainelement.currentTool.text = undefined;
             }
             element.close();
             element.options.mainelement.redraw();
@@ -146,12 +158,9 @@ function WindowToolTextToolbar(element) {
         icon: "cancel",
         click: function (e) {
             element.close();
-            element.options.mainelement.redraw();
             element.textarea.val("");
-            element.options.mainelement.currentTool.text = undefined;
+            element.options.mainelement.currentTool.cancel();
         }
     });
 
 }
-
-
