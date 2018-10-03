@@ -42,6 +42,7 @@ $(function () {
                 that.windowToolText = WindowToolText(that);
 
                 that.redraw = function () {
+                    console.log(that.drawing_data);
                     that.surface = kendo.drawing.Surface.create(that.elementSurface);
                     $.each(that.drawing_data, function (index, drawElement){
                         that.surface.draw(drawElement.shape());

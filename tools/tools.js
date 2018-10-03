@@ -145,14 +145,8 @@ function TextTool(imageEditor) {
             this.startPoint = this.currentPoint;
             imageEditor.windowToolText.open();
             imageEditor.windowToolText.Tool = this;
-            console.log(imageEditor.currentTool);
-            imageEditor.currentShape = new imageEditor.currentTool.typeShape(imageEditor);
-
-            imageEditor.surface = kendo.drawing.Surface.create(imageEditor.elementSurface);
-            imageEditor.drawing_data.forEach(function (drawElement) {
-                imageEditor.surface.draw(drawElement.shape());
-            });
-            imageEditor.currentShape.endPoint = this.currentPoint;
+            imageEditor.currentShape = new Text(imageEditor);
+            imageEditor.redraw();
             imageEditor.surface.draw(imageEditor.currentShape.tempShape());
             this.startdraw = true;
         }
@@ -202,7 +196,7 @@ function TextTool(imageEditor) {
 
 
     this.tempdraw = function () {
-        imageEditor.currentShape = new imageEditor.currentTool.typeShape(imageEditor);
+        imageEditor.currentShape = new Text(imageEditor);
         imageEditor.redraw();
         imageEditor.surface.draw(imageEditor.currentShape.tempShape());
     }

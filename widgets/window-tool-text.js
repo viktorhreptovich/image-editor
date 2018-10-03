@@ -42,11 +42,23 @@ $(function () {
                     fontfamily: 'Arial, Helvetica, sans-serif',
                     fontsize: '12px',
                     fontcolor: 'black',
-                    fontbold:false,
+                    fontbold: 'normal',
                     fontitalic: 'normal',
                     fontunderline:'none',
                     font: function () {
-                        return this.fontsize + ' ' + this.fontfamily + ' ' + this.fontbold;
+                        var fontbold = ((this.fontbold == 'normal') ? '' : 'bold ');
+                        var fontitalic = ((this.fontitalic == 'normal') ? '' : 'italic ');
+                        var fontunderline = ((this.fontunderline == 'none') ? '' : '; text-decoration: underline');
+                        return fontbold + fontitalic + this.fontsize + ' ' + this.fontfamily + fontunderline;
+                    },
+                    setBold: function (isbold) {
+                        this.set("fontbold", (isbold ? 'bold' : 'normal'));
+                    },
+                    setItalic: function (isitalic) {
+                        this.set("fontitalic", (isitalic ? 'italic' : 'normal'));
+                    },
+                    setUnderline: function (isunderline) {
+                        this.set("fontunderline", (isunderline ? 'underline' : 'none'));
                     },
                     onChangeText: function (e) {
                         that.options.mainelement.currentTool.text = that.viewModel.text;
@@ -54,21 +66,22 @@ $(function () {
                         that.options.mainelement.currentTool.font = that.viewModel.font();
                         that.options.mainelement.currentTool.tempdraw();
                     },
-                    isBold:function () {
-                      return (this.fontbold)?'bold':'normal';
-                    },
-                    clickBold:function () {
-                      alert('Bold click');
-                    }
+
                 });
                 kendo.bind(this.element, this.viewModel);
+                this.viewModel.bind("change", function () {
+                    that.options.mainelement.currentTool.text = that.viewModel.text;
+                    that.options.mainelement.currentTool.color = that.viewModel.fontcolor;
+                    that.options.mainelement.currentTool.font = that.viewModel.font();
+                    that.options.mainelement.currentTool.tempdraw();
+                });
             },
             _templates: {
                 toolbar: '<div id="Toolbar_#: id #" style="width: 99%;"></div>',
 
                 textarea: '<input id="Editor_#: id #" type="text" class="k-textbox" style="width: 99%;" ' +
                 'data-value-update="keyup" data-bind="value:text,' +
-                ' style:{fontFamily:fontfamily,fontWeight:isBold,fontStyle:fontitalic,textDecoration:fontunderline,fontSize:fontsize,color:fontcolor}, events:{keyup:onChangeText}" />',
+                ' style:{fontFamily:fontfamily,fontWeight:fontbold,fontStyle:fontitalic,textDecoration:fontunderline,fontSize:fontsize,color:fontcolor}, events:{keyup:onChangeText}" />',
 
                 dialog: '<div id="Dialog_#: id #" style="margin-top:1em;float: right">' +
                 '<button id="Apply_#: id #">APPLY</button><button type="button" id="Cancel_#: id #">CANCEL</button> ' +
@@ -99,13 +112,13 @@ function WindowToolTextToolbar(element) {
     });
 
     function toggleBold(e) {
-        element.viewModel.set("fontbold",(e.checked));
+        element.viewModel.setBold(e.checked);
     }
     function toggleItalic(e){
-        element.viewModel.fontitalic = (e.checked)?'italic':'normal';
+        element.viewModel.setItalic(e.checked);
     }
     function toggleUnderline(e){
-        element.viewModel.fontunderline = (e.checked)?'underline':'none';
+        element.viewModel.setUnderline(e.checked);
     }
 
     $("#dropdownFonts_" + element.id).kendoDropDownList({
@@ -143,7 +156,7 @@ function WindowToolTextToolbar(element) {
         icon: "check-outline",
         click: function (e) {
             if (element.viewModel.text.length > 0) {
-                element.options.mainelement.currentTool.color = element.viewModel.textcolor;
+                element.options.mainelement.currentTool.color = element.viewModel.fontcolor;
                 element.options.mainelement.currentTool.font = element.viewModel.font();
                 element.options.mainelement.currentTool.apply();
                 element.textarea.val("");

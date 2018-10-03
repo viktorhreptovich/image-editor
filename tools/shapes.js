@@ -50,8 +50,8 @@ function Shape(imageEditor) {
     }
 
     this.moveShape = function (offset) {
-        this.startPoint = new Point(this.startPoint.x - offset.x,this.startPoint.y - offset.y);
-        this.endPoint = new Point(this.endPoint.x - offset.x,this.endPoint.y - offset.y);
+        this.startPoint = new Point(this.startPoint.x - offset.x, this.startPoint.y - offset.y);
+        this.endPoint = new Point(this.endPoint.x - offset.x, this.endPoint.y - offset.y);
     }
 }
 
@@ -63,7 +63,7 @@ function Pencil(imageEditor) {
 
     this.shape = function () {
         var shape = new MultiPath(this.strokeShape());
-        $.each(this.multipath, function (index, point){
+        $.each(this.multipath, function (index, point) {
             (index == 0) ? shape.moveTo(point) : shape.lineTo(point).moveTo(point)
         });
         var group = new Group().append(shape);
@@ -76,11 +76,11 @@ function Pencil(imageEditor) {
     }
 
     this.moveShape = function (offset) {
-        this.startPoint = new Point(this.startPoint.x - offset.x,this.startPoint.y - offset.y);
-        this.endPoint = new Point(this.endPoint.x - offset.x,this.endPoint.y - offset.y);
+        this.startPoint = new Point(this.startPoint.x - offset.x, this.startPoint.y - offset.y);
+        this.endPoint = new Point(this.endPoint.x - offset.x, this.endPoint.y - offset.y);
         var movemultipath = [];
-        $.each(this.multipath, function (index, point){
-            movemultipath.push(new Point(point.x - offset.x,point.y - offset.y));
+        $.each(this.multipath, function (index, point) {
+            movemultipath.push(new Point(point.x - offset.x, point.y - offset.y));
         });
         this.multipath = movemultipath;
     }
@@ -154,9 +154,7 @@ function Text(imageEditor) {
     this.text = imageEditor.currentTool.text ? imageEditor.currentTool.text : "Enter text";
 
     this.shape = function () {
-        var shape = new DrawText(this.text, this.startPoint, {
-            fill: {color: this.color}, cursor: 'move', font: this.font,
-        });
+        var shape = new DrawText(this.text, this.startPoint, {fill: {color: this.color}, cursor: 'move', font: this.font,});
         var group = new Group().append(shape);
         if (this.selected) {
             group.append(new Rect(shape.bbox(), strokeSelect));
@@ -166,9 +164,7 @@ function Text(imageEditor) {
 
     this.tempShape = function () {
         var group = new Group;
-        var temptext = new DrawText(this.text, this.startPoint, {
-            fill: {color: this.color}, cursor: 'move', font: this.font
-        });
+        var temptext = new DrawText(this.text, this.startPoint, {fill: {color: this.color}, cursor: 'move', font: this.font});
         var temprect = new Rect(temptext.bbox(), {stroke: {color: 'black', width: 1, dashType: 'dot'}});
         group.append(temptext, temprect);
         return group;
